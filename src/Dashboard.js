@@ -5,8 +5,9 @@ import { bindActionCreators } from "redux";
 
 import { Text, View, Button, StyleSheet, TouchableOpacity } from "react-native";
 import { Header } from "./common/header";
-import { Expense } from "./expenses";
+import { AddExpenses } from "./AddExpenses";
 import { ListView } from "./common/ListView";
+import { addExpense } from './Actions';
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 class Dashboard extends Component {
@@ -21,15 +22,14 @@ class Dashboard extends Component {
   }
 
   setExpenseModalVisible(state) {
-    debugger;
     if (typeof state === "boolean") {
       this.setState({ isExpenseModalVisible: state });
     }
   }
 
   addExpense(details) {
-    debugger;
-
+    this.props.addExpense(details);
+    this.setState({ isExpenseModalVisible: false });
   }
 
   render() {
@@ -58,9 +58,9 @@ class Dashboard extends Component {
           }}
         >
           <Ionicons name={"md-add-circle"} size={50} color={"#f7941d"} />
-          <Text>Expense</Text>
+          <Text style={{ color: 'grey' }}>Expense</Text>
         </TouchableOpacity>
-        <Expense
+        <AddExpenses
           components={this.props.components}
           modalVisibility={this.state.isExpenseModalVisible}
           addExpense={(details) => {
@@ -120,4 +120,9 @@ const mapStateToProps = state => {
   return { main, components };
 };
 
-export default connect(mapStateToProps)(Dashboard);
+const mapDispatchToProps = dispatch => (
+  bindActionCreators({   
+   addExpense
+  },    dispatch ));
+
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

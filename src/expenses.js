@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import {
   ScrollView,
   Text,
@@ -9,78 +10,114 @@ import {
   FlatList,
   StyleSheet,
   Image,
-  Modal,
-  TouchableOpacity,
-  Picker
+  TouchableOpacity
 } from "react-native";
 
-class Expense extends Component {
+import { addExpense } from './Actions';
+// import Contacts from 'react-native-contacts';
+import { Header } from "./common/header";
+import { AddExpenses } from "./AddExpenses";
+
+// import { ListView } from './common/ListView';
+
+class Expenses extends Component {
   constructor(props) {
     super(props);
   }
 
   state = {
-    name: null,
-    amount: null,
-    components: this.props.components.current,
-    currentComponent: null
+    isExpenseModalVisible: false,
+    selected: { uid: null, name: null, amount: null, component: null }
   };
+
+  setExpenseModalVisible(state) {
+    if (typeof state === "boolean") {
+      this.setState({ isExpenseModalVisible: state });
+    }
+  }
+
+
+
+  generateExpensesList(component) {
+    const expenses = Object.keys(component.budget.used);
+    if (expenses.length) {
+      let list = [];
+      expenses.map(uid => {
+        const expense = component.budget.used[uid];
+        list.push(
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => {
+              this.onItemPress(uid, expense);
+            }}
+          >
+            <View style={styles.row}>
+              <Text style={styles.cardHead}>{expense.key}</Text>
+              <Text style={styles.cardAmount}>{expense.amount}</Text>
+            </View>
+            <View>
+              <Text style={styles.cardType}>{expense.component}</Text>
+            </View>
+          </TouchableOpacity>
+        );
+      });
+      return list;
+    }
+  }
+
+  onItemPress(uid, expense) {
+    this.setExpenseModalVisible(true);
+    this.setState({
+      selected: {
+        uid: uid,
+        name: expense.key,
+        amount: expense.amount,
+        component: expense.component
+      }
+    });
+  }
+
+  addExpense(details) {
+    this.props.addExpense(details);
+    this.setState({ isExpenseModalVisible: false });
+  }
 
   render() {
     return (
-      <Modal
-        animationType="slide"
-        transparent={false}
-        visible={this.props.modalVisibility}
-        onRequestClose={() => {}}
-      >
-        <View style={{ marginTop: 22 }}>
-          <Button
-            title={"Close"}
-            onPress={() => this.props.changeVisibility(false)}
-          />
-          <View>
-            <Text>Add Expense</Text>
-            <TextInput
-              placeholder={"Expense Name"}
-              style={styles.textBox}
-              name="name"
-              onChangeText={text => this.setState({ name: text })}
+      <View style={styles.mainContainer}>
+        <Header
+          headerText={"Expenses"}
+          openDrawer={() => this.props.navigation.toggleDrawer()}
+        />
+        <View style={styles.container}>
+          <ScrollView style={styles.scrollContainer}>
+            <FlatList
+              data={this.props.components.current}
+              extraData={this.props}
+              renderItem={({ item }) =>
+                item.isAdded ? (
+                  <View>{this.generateExpensesList(item)}</View>
+                ) : null
+              }
             />
-
-            <TextInput
-              keyboardType="numeric"
-              placeholder={"Amount"}
-              maxLength={10}
-              style={styles.textBox}
-              name="amountPaid"
-              onChangeText={text => this.setState({ amount: text })}
-            />
-
-            <Picker
-              mode="dropdown"
-              selectedValue={this.state.currentComponent}
-              onValueChange={text => {
-                this.setState({ currentComponent: text });
-              }}
-            >
-              {Object.keys(this.state.components).map(i => {
-                return (
-                  <Picker.Item
-                    label={this.state.components[i].key}
-                    value={this.state.components[i].key}
-                    key={this.state.components[i].key}
-                  />
-                ); //if you have a bunch of keys value pair
-              })}
-            </Picker>
-
-            <Button title={"Add"} onPress={text => {
-                this.props.addExpense({name: this.state.name, amount: this.state.amount, component: this.state.currentComponent})
-            }}/>
-          </View>
+          </ScrollView>
         </View>
-      </Modal>
+
+        <AddExpenses
+          components={this.props.components}
+          modalVisibility={this.state.isExpenseModalVisible}
+          expenseName={this.state.selected.name}
+          expenseAmount={this.state.selected.amount}
+          expenseComponent={this.state.selected.component}
+          expenseUid={this.state.selected.uid}
+          addExpense={(details) => {
+            this.addExpense(details);
+          }}
+          changeVisibility={state => {
+            this.setState({ isExpenseModalVisible: state });
+          }}
+        />
+      </View>
     );
   }
 }
@@ -88,16 +125,31 @@ class Expense extends Component {
 const styles = StyleSheet.create({
   mainContainer: {
     flexDirection: "column",
-    flex: 1,
-    backgroundColor: "#f36363"
+    flex: 1
+  },
+  container: {
+    paddingRight: 20,
+    height: 600,
+    paddingLeft: 20,
+    backgroundColor: "#f2f2f2",
+    marginBottom: 20,
+    flexDirection: "column",
+    flex: 1
+  },
+  scrollContainer: {
+    display: "flex",
+    flexDirection: "column",
+    marginBottom: 15,
+    marginTop: 15
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between"
   },
   userHead: {},
   row: {
-    borderBottomColor: "#e0e0e0",
-    borderBottomWidth: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    height: 80,
     alignItems: "center",
     paddingLeft: 5,
     paddingRight: 5
@@ -119,27 +171,35 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold"
   },
-  next: {
-    backgroundColor: "white",
-    color: "#f36363",
-    position: "absolute",
-    bottom: 0,
-    width: "100%",
-    flex: 1,
-    flexDirection: "row",
-    height: 45
+  card: {
+    backgroundColor: "#ffffff",
+    paddingLeft: 3,
+    paddingRight: 3,
+    paddingTop: 5,
+    paddingBottom: 5,
+    marginBottom: 8
   },
-  nextText: {
-    fontSize: 26,
-    fontWeight: "bold",
-    marginLeft: 10,
-    marginTop: 4
+  cardHead: {
+    fontSize: 18
   },
-  arrow: {
-    position: "absolute",
-    right: 10,
-    bottom: 9
+  cardAmount: {
+    fontSize: 18,
+    fontWeight: "bold"
+  },
+  cardType: {
+    fontSize: 14,
+    color: "#cccccc"
   }
 });
 
-export { Expense };
+const mapStateToProps = state => {
+  const { components } = state;
+  return { components };
+};
+
+const mapDispatchToProps = dispatch => (
+  bindActionCreators({   
+   addExpense
+  },    dispatch ));
+
+export default connect(mapStateToProps, mapDispatchToProps)(Expenses);
