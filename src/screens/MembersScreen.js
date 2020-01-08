@@ -13,13 +13,13 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import { bindActionCreators, store } from "redux";
-import { addMember, removeMember, updateMemberDetails } from "./Actions";
+import { addMember, removeMember, updateMemberDetails } from "../actions/Actions";
 // import Contacts from 'react-native-contacts';
-import { Header } from "./common/header";
+import { Header } from "../common/header";
 
 // import { ListView } from './common/ListView';
 
-class Members extends Component {
+class MembersScreen extends Component {
   constructor(props) {
     super(props);
   }
@@ -184,4 +184,4 @@ const mapDispatchToProps = dispatch =>
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Members);
+)(MembersScreen);

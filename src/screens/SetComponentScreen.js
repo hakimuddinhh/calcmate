@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { setComponentValue, updateTotalRent } from "./Actions";
+import { setComponentValue, updateTotalRent } from "../actions/Actions";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Input } from "react-native-elements";
+import globalStyles from "../common/globalStyles";
+
 import {
   Text,
   View,
@@ -14,11 +16,16 @@ import {
   TextInput
 } from "react-native";
 
-class SetComponentValue extends Component {
+class SetComponentScreen extends Component {
   state = {
     tags: {},
     demo: false
   };
+
+  componentDidMount() {
+    debugger;
+    console.log(this.props.components.current);
+  }
 
   setComponentValue(key, value) {
     this.props.setComponentValue(key, parseInt(value));
@@ -29,7 +36,7 @@ class SetComponentValue extends Component {
 
   render() {
     return (
-      <View style={{ marginTop: 22, flex: 1, flexDirection: "column" }}>
+      <View style={globalStyles.containerWhite}>
         <Text style={Styles.h2}>Set Component's Value</Text>
         <View style={Styles.container}>
           <ScrollView>
@@ -45,6 +52,7 @@ class SetComponentValue extends Component {
                         this.setComponentValue(item.key, e.nativeEvent.text)
                       }
                       placeholder={"0"}
+                      defaultValue={(item.budget.total) ? `${item.budget.total}` : ''}
                       style={Styles.input}
                       keyboardType="numeric"
                     />
@@ -70,12 +78,12 @@ class SetComponentValue extends Component {
           <Text style={Styles.label}>Total</Text>
         </View>
         <TouchableOpacity
-          style={Styles.next}
+          style={globalStyles.nextPrimary}
           onPress={() => this.props.navigation.navigate("addMembers")}
         >
-          <Text style={Styles.nextText}>Next</Text>
+          <Text style={globalStyles.nextTextPrimary}>Next</Text>
           <Ionicons
-            style={Styles.arrow}
+            style={globalStyles.arrow}
             name={"ios-arrow-forward"}
             size={25}
             color={"#ffffff"}
@@ -163,4 +171,4 @@ const mapDispatchToProps = dispatch =>
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(SetComponentValue);
+)(SetComponentScreen);

@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import {
   ScrollView,
@@ -13,18 +15,44 @@ import {
   TouchableOpacity,
   Picker
 } from "react-native";
+import { onChangeInput } from "../actions/Actions";
 
-class AddExpenses extends Component {
+class AddExpensesScreen extends Component {
   constructor(props) {
     super(props);
   }
 
   state = {
-    key: null,
-    amount: null,
-    components: this.props.components.current,
-    currentComponent: null
+    key: '',
+    amount: '',
+    components: '',
+    currentComponent: ''
   };
+
+  componentDidMount() {
+    debugger;
+    this.setState({key: this.props.expenseName,
+    amount: this.props.expenseAmount,
+    components: this.props.components.current,
+    currentComponent: this.props.expenseComponent});
+
+  }
+
+  onChangeText(text, type) {
+    switch (type) {
+      case "name":
+        this.setState({ name: text });
+        break;
+
+      case "amount":
+        this.setState({ amount: text });
+        break;
+
+      default:
+        break;
+    }
+    this.props.onChangeInput({ name: type, value: text });
+  }
 
   render() {
     return (
@@ -44,25 +72,25 @@ class AddExpenses extends Component {
             <TextInput
               placeholder={"Expense Name"}
               style={styles.textBox}
-              value={this.state.name || this.props.expenseName}
+              value={this.state.name}
               name="name"
-              onChangeText={text => this.setState({ name: text })}
+              onChangeText={text => this.onChangeText(text, "name")}
             />
 
             <TextInput
               keyboardType="numeric"
               placeholder={"Amount"}
               maxLength={10}
-              value={this.state.amount || this.props.expenseAmount}
+              value={this.state.amount}
               style={styles.textBox}
               name="amountPaid"
-              onChangeText={text => this.setState({ amount: text })}
+              onChangeText={text => this.onChangeText(text, "amount")}
             />
 
             <Picker
               mode="dropdown"
               selectedValue={
-                this.state.currentComponent || this.props.expenseComponent
+                this.state.currentComponent
               }
               onValueChange={text => {
                 this.setState({ currentComponent: text });
@@ -159,4 +187,16 @@ const styles = StyleSheet.create({
   }
 });
 
-export { AddExpenses };
+const mapStateToProps = state => {
+  const { inputs } = state;
+  return { inputs };
+};
+
+const mapDispatchToProps = dispatch => (
+  bindActionCreators({ onChangeInput }, dispatch)
+);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AddExpensesScreen);

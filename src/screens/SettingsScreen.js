@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 // import { FormLabel, FormInput, FormValidationMessage } from 'react-native-elements';
 import { ScrollView, View, Text, StyleSheet, TextInput, Button } from 'react-native';
-import { Header } from './common/header';
-import ContributionComponents from './ContributionComponents';
+import { Header } from '../common/header';
+import ContributionComponents from '../components/ContributionComponents';
 
-export default class Settings extends Component {
+export default class SettingsScreen extends Component {
 
   state = {
     modalVisible: false,

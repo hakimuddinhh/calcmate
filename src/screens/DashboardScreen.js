@@ -1,16 +1,16 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-// import { changeFoodValue } from './Actions';
+// import { changeFoodValue } from '../actions/Actions';
 
 import { Text, View, Button, StyleSheet, TouchableOpacity } from "react-native";
-import { Header } from "./common/header";
-import { AddExpenses } from "./AddExpenses";
-import { ListView } from "./common/ListView";
-import { addExpense } from './Actions';
+import { Header } from "../common/header";
+import { AddExpenses } from "../common/modal";
+import { ListView } from "../common/ListView";
+import { addExpense } from '../actions/Actions';
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-class Dashboard extends Component {
+class DashboardScreen extends Component {
   state = { isExpenseModalVisible: false };
 
   calcTotalContribution(datas) {
@@ -33,6 +33,7 @@ class Dashboard extends Component {
   }
 
   render() {
+    console.log('DashboardScreen');
     return (
       <View style={{ marginTop: 22, flex: 1, flexDirection: "column" }}>
         <Header
@@ -41,7 +42,7 @@ class Dashboard extends Component {
         />
         <View style={styles.row}>
           <Text style={styles.smallHeader}>
-            {this.props.main.current.month}
+            {this.props.common.current.month}
           </Text>
           <Text style={styles.mediumHeader}>
             {this.props.components.totalAmount}
@@ -116,8 +117,8 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { main, components } = state;
-  return { main, components };
+  const { common, components } = state;
+  return { common, components };
 };
 
 const mapDispatchToProps = dispatch => (
@@ -125,4 +126,4 @@ const mapDispatchToProps = dispatch => (
    addExpense
   },    dispatch ));
 
-export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
+export default connect(mapStateToProps, mapDispatchToProps)(DashboardScreen);

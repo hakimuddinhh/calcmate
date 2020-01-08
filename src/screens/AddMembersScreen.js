@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { addMember, removeMember } from "./Actions";
+import { addMember, removeMember } from "../actions/Actions";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import {
   ScrollView,
@@ -16,7 +16,7 @@ import {
   TouchableOpacity
 } from "react-native";
 
-class AddMembers extends Component {
+class AddMembersScreen extends Component {
   constructor(props) {
     super(props);
   }
@@ -31,7 +31,7 @@ class AddMembers extends Component {
     this.props.addMember({
       name: this.state.name,
       amountPaid: this.state.amountPaid
-    });
+    }, this.props.components);
     this.setModalVisible(false);
   }
 
@@ -200,4 +200,4 @@ const mapDispatchToProps = dispatch =>
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(AddMembers);
+)(AddMembersScreen);

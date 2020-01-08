@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Text, View, Button } from 'react-native';
-import { Header } from './common/header';
+import { Header } from '../common/header';
 
-class Me extends Component {
+class ProfileScreen extends Component {
 
 	render() {
 		return (
@@ -22,4 +22,4 @@ const mapStateToProps = (state) => {
   return { main };
 };
 
-export default connect(mapStateToProps)(Me);
+export default connect(mapStateToProps)(ProfileScreen);

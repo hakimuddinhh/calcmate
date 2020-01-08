@@ -13,14 +13,14 @@ import {
   TouchableOpacity
 } from "react-native";
 
-import { addExpense } from './Actions';
+import { addExpense } from '../actions/Actions';
 // import Contacts from 'react-native-contacts';
-import { Header } from "./common/header";
-import { AddExpenses } from "./AddExpenses";
+import { Header } from "../common/header";
+import { AddExpenses } from "../common/modal";
 
 // import { ListView } from './common/ListView';
 
-class Expenses extends Component {
+class ExpensesScreen extends Component {
   constructor(props) {
     super(props);
   }
@@ -35,8 +35,6 @@ class Expenses extends Component {
       this.setState({ isExpenseModalVisible: state });
     }
   }
-
-
 
   generateExpensesList(component) {
     const expenses = Object.keys(component.budget.used);
@@ -102,7 +100,6 @@ class Expenses extends Component {
             />
           </ScrollView>
         </View>
-
         <AddExpenses
           components={this.props.components}
           modalVisibility={this.state.isExpenseModalVisible}
@@ -198,8 +195,8 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => (
-  bindActionCreators({   
+  bindActionCreators({
    addExpense
   },    dispatch ));
 
-export default connect(mapStateToProps, mapDispatchToProps)(Expenses);
+export default connect(mapStateToProps, mapDispatchToProps)(ExpensesScreen);

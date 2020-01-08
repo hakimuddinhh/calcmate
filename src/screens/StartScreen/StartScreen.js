@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { changeFlatName } from "./Actions";
+import { changeFlatName } from "../../actions/Actions";
 import {
   Text,
   View,

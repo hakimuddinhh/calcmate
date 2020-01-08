@@ -1,3 +1,18 @@
+export const setSession = userDetails => ({
+  type: "setSession",
+  payload: userDetails
+});
+
+export const setSetupProgress = completedSteps => ({
+  type: "setSetupProgress",
+  payload: completedSteps
+});
+
+export const deleteSession = () => ({
+  type: "deleteSession",
+  payload: {}
+});
+
 export const changeFlatName = flatName => ({
   type: "changeFlatName",
   payload: flatName
@@ -9,8 +24,8 @@ export const addMember = (memberDetails, components) => ({
 });
 
 export const addContributionComponent = tagName => ({
-  type: "addContributionComponent"
-  payload: tagName,
+  type: "addContributionComponent",
+  payload: tagName
 });
 
 export const changeComponentStatus = tagName => ({

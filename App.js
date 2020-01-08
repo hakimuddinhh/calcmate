@@ -7,18 +7,18 @@
  */
 
 import React, { Component } from 'react';
+import StackNavigator from './src/navigations/AppNavigator';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
-import mainReducer from './src/Reducer';
-import StackNavigator from './src/AppNavigator';
-
-const store = createStore(mainReducer);
+import { PersistGate } from 'redux-persist/integration/react';
+import { store, persistor } from './src/stores/main.store';
 
 export default class App extends Component {
   render() {
     return (
       <Provider store={store}>
-        <StackNavigator />
+        <PersistGate persistor={persistor}>
+          <StackNavigator />
+        </PersistGate>
       </Provider>
     );
   }
